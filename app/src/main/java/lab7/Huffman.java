@@ -17,7 +17,4 @@ public class Components {
         System.out.println(new Components().getGreeting());
     }
 
-
-    //testing 123
-
 }
