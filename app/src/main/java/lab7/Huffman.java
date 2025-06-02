@@ -3,26 +3,33 @@ import heap.Heap;
 
 public class Huffman {
 
-    Heap heap = new Heap();
+    private static Heap heap = new Heap();
+    private static HashTable hash = new HashTable();
 
-    public void countFrequencies(String string){
+
+    public static void countFrequencies(String string){
         for (int i = 0; i < string.length(); i++){
-
-            //if string[i] is not in heap, add new node with string[i] v with priority 1
-            if (heap.contains(string.charAt(i))==false){
-                heap.add(string.charAt(i), 1);
-            //if string[i] is contained in heap, find string[i] node and ++ priority
+            if (hash.containsKey(string.charAt(i))==false){
+                hash.put(string.charAt(i),1);
             } else {
-                heap.changePriority(string.charAt(i), heap.getPriority(string.charAt(i))+1);
+                int newCount = (int)hash.get(string.charAt(i))+1;
+                hash.put(string.charAt(i), newCount);
             }
 
         }
         
     }
 
-    public static hNode buildTree(Heap heap){
-        return;
+    
+    public static hNode buildTree(HashTable Hash){
+        for (int i = 0; i < hash.getSize();i++){
+            if (hash[i] != null){
+                heap.add(hash.get(i).key,hash.get(i).value);
+            }
+            
+        }
     }
+    
 
     public static int Decode(hNode rootNode, String codedString){
         return 1;
@@ -37,6 +44,7 @@ public class Huffman {
 
         String string = "kasdjlf;j;asdf";
         countFrequencies(string);
+        hash.dump();
     }
 
     public class hNode{
