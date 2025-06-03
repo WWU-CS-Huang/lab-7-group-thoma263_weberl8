@@ -31,7 +31,7 @@ public class Huffman {
         //forms a heap with the priorities and hNodes
         for (int i = 0; i < (elementCount);i++){
                 int priority = (Integer) hash.get(elementList.get(i));
-                hNode newNode = new hNode(elementList.get(i), priority, null,null,null);
+                hNode newNode = new hNode(elementList.get(i), priority);
                 heap.add(newNode, priority);
         }
 
