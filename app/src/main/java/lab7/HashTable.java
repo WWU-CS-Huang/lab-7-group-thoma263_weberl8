@@ -79,6 +79,7 @@ public class HashTable<K,V> {
             while (traverse.key != key && traverse.next!=null){
                 traverse = traverse.next;
             }
+
             //return val if equal to key
             if (traverse.key == key){
                 returnVal = traverse.value;
@@ -203,7 +204,6 @@ public class HashTable<K,V> {
         }
         return returnVal;
     }
-
 
     // suggested helper method:
     /* check the load factor; if it exceeds 0.8, double the capacity 
