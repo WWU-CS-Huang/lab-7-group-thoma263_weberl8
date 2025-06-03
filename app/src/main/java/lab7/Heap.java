@@ -1,4 +1,5 @@
-package heap;
+package lab7;
+
 /*
  * Author: Landon Weber
  * Date: 5/18/2025

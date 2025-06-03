@@ -3,7 +3,7 @@
  * Date: 5/25/2025
  * Purpose: Arraylist that allocates new memory
  */
-package heap;
+package lab7;
 import java.lang.reflect.Array;
 import java.util.NoSuchElementException;
 

@@ -5,19 +5,18 @@ public class Huffman {
 
     private static Heap heap = new Heap();
     private static HashTable hash = new HashTable();
-    //keyList currently initialized at an arbitrary value
-    private static char[] keyList = new char[20];
-    private static int keyCount = 0;
-
+    //elementList exists to provide a way to get values during buildTree
+    private static AList<Character> elementList = new AList<Character>(10);
+    private static int elementCount = 0;
 
     public static void countFrequencies(String string){
         for (int i = 0; i < string.length(); i++){
             //TODO: I think we need to tell it to skip spaces (' ') as well
             if (hash.containsKey(string.charAt(i))==false){
                 hash.put(string.charAt(i),1);
-                //list of keys used
-                keyList[keyCount] = string.charAt(i);
-                keyCount++;
+                //list of elements used
+                elementList.append(string.charAt(i));
+                elementCount++;
             } else {
                 //replace key and ++ its value
                 int newCount = (int)hash.get(string.charAt(i))+1;
@@ -26,21 +25,35 @@ public class Huffman {
 
         }
     }
-
-    //TODO: replace void with root Node
-    public static void buildTree(HashTable Hash){
-        //forms a heap with the priorities
-        for (int i = 0; i < (keyCount);i++){
-                char key = keyList[i];
-                int value = (Integer) hash.get(key);
-                heap.add(key, value);
-        }
-        
-        //TODO: take heap, form into huffman tree
-
-
-    }
     
+
+    public static hNode buildTree(HashTable Hash){
+        //forms a heap with the priorities and hNodes
+        for (int i = 0; i < (elementCount);i++){
+                int priority = (Integer) hash.get(elementList.get(i));
+                hNode newNode = new hNode(elementList.get(i), priority, null,null,null);
+                heap.add(newNode, priority);
+        }
+
+        //loop that forms the huffman tree while >1 element in the heap
+        while (heap.size() > 1){
+            hNode firstNode = (hNode) heap.poll();
+            hNode secondNode = (hNode) heap.poll();
+            int addedPri = firstNode.priority + secondNode.priority;
+        
+            //assigns children to newNode based on priority
+            hNode newNode;
+            if (firstNode.priority < secondNode.priority){
+                newNode = new hNode(addedPri, firstNode,secondNode);
+            } else {
+                newNode = new hNode(addedPri, secondNode, firstNode);
+            }
+            firstNode.parent = newNode;
+            secondNode.parent = newNode;
+            heap.add(newNode, addedPri);
+        }
+        return (hNode) heap.poll();
+    } 
 
     public static int Decode(hNode rootNode, String codedString){
         return 1;
@@ -56,25 +69,37 @@ public class Huffman {
         countFrequencies(string);
         hash.dump();
         buildTree(hash);
+
     }
 
-    public class hNode{
+    public static class hNode{
 
-        public String value;
+        public char value;
         public int priority;
         public hNode parent;
         public hNode leftChild;
         public hNode rightChild;
 
+        //initialize without parents/children
+        public hNode(char v, int pri){
+            value = v;
+            priority = pri;
+        }
 
-        public hNode(String v, int pri, hNode p, hNode l, hNode r){
+        //initialize for parent nodes
+        public hNode(int pri, hNode left, hNode right){
+            priority = pri;
+            leftChild = left;
+            rightChild = right;
+        }
 
+        //initialize with all values
+        public hNode(char v, int pri, hNode p, hNode left, hNode right){
             value = v;
             priority = pri;
             parent = p;
-            leftChild = l;
-            rightChild = r;
-            
+            leftChild = left;
+            rightChild = right;
         }
     
     }
