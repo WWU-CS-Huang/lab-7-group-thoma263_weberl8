@@ -9,15 +9,14 @@ public class Huffman {
     private static Heap heap = new Heap();
     private static HashTable hash = new HashTable();
     //elementList exists to provide a way to get values during buildTree
-    private static AList<Character> elementList = new AList<Character>(10);
+    private static AList<Character> elementList = new AList();
     //hashtable that contains all letters and their codes
     private static HashTable codes = new HashTable();
     private static int elementCount = 0;
 
     public static void countFrequencies(String string){
         for (int i = 0; i < string.length(); i++){
-            //TODO: I think we need to tell it to skip spaces (' ') as well
-            if (hash.containsKey(string.charAt(i))==false){
+            if (hash.containsKey(string.charAt(i)) == false){
                 hash.put(string.charAt(i),1);
                 //list of elements used
                 elementList.append(string.charAt(i));
@@ -33,6 +32,7 @@ public class Huffman {
     public static hNode buildTree(HashTable hash){
         //forms a heap with the priorities and hNodes
         for (int i = 0; i < (elementCount); i++){
+                //System.out.println(elementList.get(i));
                 int priority = (int) hash.get(elementList.get(i));
                 hNode newNode = new hNode(elementList.get(i), priority);
                 heap.add(newNode, priority);
@@ -109,29 +109,32 @@ public class Huffman {
         //Takes the file name argument and makes a file object and makes a scanner
         String fileName = args[0];
         File file = new File(fileName);
-        Scanner scanner = new Scanner(file);
+        Scanner scanner;
 
         //Error catching if the file is not found
-        //try {
-        //    scanner = new Scanner(file);
-        //} catch (FileNotFoundException e){
-        //    e.printStackTrace();
-        //    return;
-        //}
-
-        while (scanner.hasNext()){
-            String input = scanner.nextLine;
+        try {
+            scanner = new Scanner(file);
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
+            return;
         }
 
-        System.out.println(input);
+        StringBuilder inputBuilder = new StringBuilder();
+        while (scanner.hasNextLine() == true){
+            inputBuilder.append(scanner.nextLine());
+        }
+
+        String input = inputBuilder.toString();
 
         countFrequencies(input);
+        //hash.dump();
         hNode huffmanTree = buildTree(hash);
         traversal(huffmanTree, "");
+        //codes.dump();
         
         String encoded = encode(input);
         String decoded = decode(huffmanTree, encoded);
-        double compRatio = (encoded.length())/(input.length())/0.8;
+        double compRatio = (double)encoded.length()/(double)input.length()/8.0;
         String correctness = "";
         if (input.equals(decoded) == true){
             correctness = "true";
@@ -156,7 +159,7 @@ public class Huffman {
         //hNode tree = buildTree(hash);
         //traversal(tree, "");
         //codes.dump();
-        //String encoded = encode(tree, string);
+        //String encoded = encode(string);
         //String decoded = decode(tree, encoded);
         //System.out.println(encoded);
         //System.out.println(decoded);
