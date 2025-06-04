@@ -10,6 +10,8 @@ public class Huffman {
     private static HashTable hash = new HashTable();
     //elementList exists to provide a way to get values during buildTree
     private static AList<Character> elementList = new AList<Character>(10);
+    //hashtable that contains all letters and their codes
+    private static HashTable codes = new HashTable();
     private static int elementCount = 0;
 
     public static void countFrequencies(String string){
@@ -64,36 +66,50 @@ public class Huffman {
         hNode curr = rootNode;
 
         for (int i = 0; i < codedString.length(); i++){
-            if (codedString.charAt(i) == "0"){
+            if (codedString.charAt(i) == '0'){
                 curr = curr.leftChild;
-            } else if (codedString.charAt(i) == "1"){
+            } else if (codedString.charAt(i) == '1'){
                 curr = curr.rightChild;
             }
-            if (curr.leftChild == null && curr.rightchild ==null){
+            if (curr.leftChild == null && curr.rightChild ==null){
                 decodedString.append(curr.value);
+                curr = rootNode;
             }
         }
         return decodedString.toString();
     }
 
-    //Takes an input string, 
-    public static String encode(hNode rootNode, String inputString){
+    //Traverses through the tree, building codes along the way. once it
+    //finds a leaf node, it puts that nodes value along with the code
+    //to get there into a hashmap
+    public static void traversal(hNode n, String codeBuild){
+        if(n.leftChild == null && n.rightChild ==null){
+            n.code = codeBuild;
+            codes.put(n.value, n.code);
+        } else {
+            traversal(n.leftChild, codeBuild + "0");
+            traversal(n.rightChild, codeBuild + "1");
+        }
+    }
+
+    //Precondition: traversal has been run
+    //Goes through the input string, then gets each letter's code from
+    //the hashtable built by traversal, putting the codes into a new string
+    public static String encode(String inputString){
         StringBuilder encodedString = new StringBuilder();
-        hNode curr = rootNode;
 
         for (int i = 0; i < inputString.length(); i++){
-            while (inputString.charAt(i) != curr.value){
-
-            }
+            encodedString.append(codes.get(inputString.charAt(i)));
         }
+        return encodedString.toString();
     }
 
     public static void main(String[] args) {
 
         //Takes the file name argument and makes a file object and makes a scanner
-        //String fileName = args[0];
-        //File file = new File(fileName);
-        //Scanner scanner;
+        String fileName = args[0];
+        File file = new File(fileName);
+        Scanner scanner = new Scanner(file);
 
         //Error catching if the file is not found
         //try {
@@ -103,42 +119,54 @@ public class Huffman {
         //    return;
         //}
 
-        //String input = scanner.toString();
+        while (scanner.hasNext()){
+            String input = scanner.nextLine;
+        }
 
-        //countFrequencies(input);
-        //hNode huffmanTree = buildTree(hash);
+        System.out.println(input);
+
+        countFrequencies(input);
+        hNode huffmanTree = buildTree(hash);
+        traversal(huffmanTree, "");
         
-        //String encoded = encode(huffmanTree, input);
-        //String decoded = decode(huffmanTree, encoded);
-        //double compRatio = (encoded.length())/(input.length())/0.8;
-        //String correctness = "";
-        //if (input.equals(decoded) == true){
-        //    correctness = "true";
-        //} else {
-        //    correctness = "false";
-        //}
+        String encoded = encode(input);
+        String decoded = decode(huffmanTree, encoded);
+        double compRatio = (encoded.length())/(input.length())/0.8;
+        String correctness = "";
+        if (input.equals(decoded) == true){
+            correctness = "true";
+        } else {
+            correctness = "false";
+        }
 
-        //if (input.length() < 100){
-        //    System.out.println("Input string: " + input);
-        //    System.out.println("Encoded string: " + encoded);
-        //    System.out.println("Decoded string: " + decoded);
-        //    System.out.println("Decoded equals input: " + correctness);
-        //    System.out.println("Compression ratio: " + compRatio);
-        //} else {
-        //    System.out.println("Decoded equals input: " + correctness);
-        //    System.out.println("Compression ratio: " + compRatio) ;
-        //}
+        if (input.length() < 100){
+            System.out.println("Input string: " + input);
+            System.out.println("Encoded string: " + encoded);
+            System.out.println("Decoded string: " + decoded);
+            System.out.println("Decoded equals input: " + correctness);
+            System.out.println("Compression ratio: " + compRatio);
+        } else {
+            System.out.println("Decoded equals input: " + correctness);
+            System.out.println("Compression ratio: " + compRatio) ;
+        }
 
-        String string = "aaabbcccddddex";
-        countFrequencies(string);
-        hash.dump();
-        buildTree(hash);
+        //String string = "aaabbcccddddex";
+        //countFrequencies(string);
+        //hash.dump();
+        //hNode tree = buildTree(hash);
+        //traversal(tree, "");
+        //codes.dump();
+        //String encoded = encode(tree, string);
+        //String decoded = decode(tree, encoded);
+        //System.out.println(encoded);
+        //System.out.println(decoded);
     }
 
     public static class hNode{
 
         public char value;
         public int priority;
+        public String code;
         public hNode parent;
         public hNode leftChild;
         public hNode rightChild;
