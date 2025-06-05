@@ -16,12 +16,12 @@ public class Huffman {
 
     public static void countFrequencies(String string){
         for (int i = 0; i < string.length(); i++){
-            if (hash.containsKey(string.charAt(i)) == false){
+            if (hash.containsKey(string.charAt(i)) == false && string.charAt(i)!=('\uFEFF')){
                 hash.put(string.charAt(i),1);
                 //list of elements used
                 elementList.append(string.charAt(i));
                 elementCount++;
-            } else {
+            } else if (string.charAt(i)!=('\uFEFF')) {
                 //replace key and ++ its value
                 int newCount = (int)hash.get(string.charAt(i))+1;
                 hash.put(string.charAt(i), newCount);
@@ -32,10 +32,20 @@ public class Huffman {
     public static hNode buildTree(HashTable hash){
         //forms a heap with the priorities and hNodes
         for (int i = 0; i < (elementCount); i++){
-                //System.out.println(elementList.get(i));
-                int priority = (int) hash.get(elementList.get(i));
+                
+                int priority = 1;
+                try {
+                    priority = (int) hash.get(elementList.get(i));
+                } catch (NullPointerException e){}
                 hNode newNode = new hNode(elementList.get(i), priority);
                 heap.add(newNode, priority);
+
+
+                
+                    
+                
+
+                
         }
 
         //loop that forms the huffman tree while >1 element in the heap
@@ -120,11 +130,12 @@ public class Huffman {
         }
 
         StringBuilder inputBuilder = new StringBuilder();
-        while (scanner.hasNextLine() == true){
+        while (scanner.hasNextLine()){
             inputBuilder.append(scanner.nextLine());
         }
-
+        
         String input = inputBuilder.toString();
+       
 
         countFrequencies(input);
         //hash.dump();
