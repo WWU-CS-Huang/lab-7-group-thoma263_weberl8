@@ -1,3 +1,9 @@
+//Authors: Landon Weber, Eleanor Thomas
+//Date: 6/5/25
+//Description: Huffman Tree
+
+
+
 package lab7;
 import heap.Heap;
 import java.util.Scanner;
@@ -14,12 +20,16 @@ public class Huffman {
     private static HashTable codes = new HashTable();
     private static int elementCount = 0;
 
+
+
     public static void countFrequencies(String string){
         for (int i = 0; i < string.length(); i++){
             if (hash.containsKey(string.charAt(i)) == false && string.charAt(i)!=('\uFEFF')){
                 hash.put(string.charAt(i),1);
                 //list of elements used
                 elementList.append(string.charAt(i));
+                
+                System.out.println(string.charAt(i)+"!");
                 elementCount++;
             } else if (string.charAt(i)!=('\uFEFF')) {
                 //replace key and ++ its value
@@ -36,15 +46,12 @@ public class Huffman {
                 int priority = 1;
                 try {
                     priority = (int) hash.get(elementList.get(i));
-                } catch (NullPointerException e){}
+                } catch (NullPointerException e){
+                }
+
+                
                 hNode newNode = new hNode(elementList.get(i), priority);
                 heap.add(newNode, priority);
-
-
-                
-                    
-                
-
                 
         }
 
@@ -135,13 +142,17 @@ public class Huffman {
         }
         
         String input = inputBuilder.toString();
-       
+        //potential issue due to StringBuilder? This fixes it
+        input = input.replace("\uFEFF","");
+        input = input.replace('“','"');
+        input = input.replace('”','"');
+        input = input.replace('ê','e');
+        input = input.replace('ô','o');
 
         countFrequencies(input);
-        //hash.dump();
         hNode huffmanTree = buildTree(hash);
         traversal(huffmanTree, "");
-        //codes.dump();
+        
         
         String encoded = encode(input);
         String decoded = decode(huffmanTree, encoded);
@@ -161,7 +172,9 @@ public class Huffman {
             System.out.println("Compression ratio: " + compRatio);
         } else {
             System.out.println("Decoded equals input: " + correctness);
-            System.out.println("Compression ratio: " + compRatio) ;
+            System.out.println("Compression ratio: " + compRatio);
+            System.out.println("Encoded string: " + encoded.charAt(0)+ encoded.charAt(1)+ encoded.charAt(2)+ encoded.charAt(3) + encoded.charAt(4)+ encoded.charAt(5)+ encoded.charAt(6)+ encoded.charAt(7));
+            System.out.println("Decoded string: " + decoded.charAt(0)+ decoded.charAt(1)+ decoded.charAt(2)+ decoded.charAt(3) + decoded.charAt(4) + decoded.charAt(5)+ decoded.charAt(6)+ decoded.charAt(7));
         }
 
         //String string = "aaabbcccddddex";
