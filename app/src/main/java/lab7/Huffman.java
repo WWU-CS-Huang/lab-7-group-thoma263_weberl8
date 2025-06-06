@@ -2,8 +2,6 @@
 //Date: 6/5/25
 //Description: Huffman Tree
 
-
-
 package lab7;
 import heap.Heap;
 import java.util.Scanner;
@@ -20,16 +18,15 @@ public class Huffman {
     private static HashTable codes = new HashTable();
     private static int elementCount = 0;
 
-
-
+    //Keeps track of all letters, if a letter hasn't been seen it's put into the hashtable
+    //and if it has been seen then it's updated with a new count. There's error catching 
+    //for Great Expectations here as well.
     public static void countFrequencies(String string){
         for (int i = 0; i < string.length(); i++){
             if (hash.containsKey(string.charAt(i)) == false && string.charAt(i)!=('\uFEFF')){
                 hash.put(string.charAt(i),1);
                 //list of elements used
                 elementList.append(string.charAt(i));
-                
-                System.out.println(string.charAt(i)+"!");
                 elementCount++;
             } else if (string.charAt(i)!=('\uFEFF')) {
                 //replace key and ++ its value
@@ -42,17 +39,13 @@ public class Huffman {
     public static hNode buildTree(HashTable hash){
         //forms a heap with the priorities and hNodes
         for (int i = 0; i < (elementCount); i++){
-                
                 int priority = 1;
                 try {
                     priority = (int) hash.get(elementList.get(i));
                 } catch (NullPointerException e){
                 }
-
-                
                 hNode newNode = new hNode(elementList.get(i), priority);
                 heap.add(newNode, priority);
-                
         }
 
         //loop that forms the huffman tree while >1 element in the heap
@@ -136,13 +129,14 @@ public class Huffman {
             return;
         }
 
+        //Uses StringBuilder to create the input string from the scanner
         StringBuilder inputBuilder = new StringBuilder();
         while (scanner.hasNextLine()){
             inputBuilder.append(scanner.nextLine());
         }
-        
         String input = inputBuilder.toString();
-        //potential issue due to StringBuilder? This fixes it
+
+        //replaces irregular values that cause an issue in counting
         input = input.replace("\uFEFF","");
         input = input.replace('“','"');
         input = input.replace('”','"');
@@ -152,7 +146,6 @@ public class Huffman {
         countFrequencies(input);
         hNode huffmanTree = buildTree(hash);
         traversal(huffmanTree, "");
-        
         
         String encoded = encode(input);
         String decoded = decode(huffmanTree, encoded);
@@ -173,22 +166,14 @@ public class Huffman {
         } else {
             System.out.println("Decoded equals input: " + correctness);
             System.out.println("Compression ratio: " + compRatio);
-            System.out.println("Encoded string: " + encoded.charAt(0)+ encoded.charAt(1)+ encoded.charAt(2)+ encoded.charAt(3) + encoded.charAt(4)+ encoded.charAt(5)+ encoded.charAt(6)+ encoded.charAt(7));
-            System.out.println("Decoded string: " + decoded.charAt(0)+ decoded.charAt(1)+ decoded.charAt(2)+ decoded.charAt(3) + decoded.charAt(4) + decoded.charAt(5)+ decoded.charAt(6)+ decoded.charAt(7));
         }
-
-        //String string = "aaabbcccddddex";
-        //countFrequencies(string);
-        //hash.dump();
-        //hNode tree = buildTree(hash);
-        //traversal(tree, "");
-        //codes.dump();
-        //String encoded = encode(string);
-        //String decoded = decode(tree, encoded);
-        //System.out.println(encoded);
-        //System.out.println(decoded);
     }
 
+    //This node class serves as our huffman tree. each node has a value, in this case
+    //that's represented as a char. It also contains a the count of how many times it 
+    //appears, which is it's priority in the heap as well as here. It contains the 
+    //code built up by string builder that's associated to each letter. Lastly, it 
+    //contains a parent, left child, and right child.
     public static class hNode{
 
         public char value;
